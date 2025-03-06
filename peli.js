@@ -1,6 +1,6 @@
 const peliAlue = document.getElementById('peliAlue');
 const vuohi = document.createElement('div');
-vuohi.textContent = '';
+vuohi.textContent = '\uD83D\uDC10'; // Vuohi emoji unicode
 vuohi.classList.add('hahmo');
 peliAlue.appendChild(vuohi);
 
@@ -18,7 +18,7 @@ vuohi.style.bottom = '0px';
 
 function luoKasvis() {
     const kasvis = document.createElement('div');
-    kasvis.textContent = '';
+    kasvis.textContent = '\uD83E\uDD52'; // Parsakaali emoji unicode
     kasvis.classList.add('hahmo');
     peliAlue.appendChild(kasvis);
 
@@ -31,7 +31,7 @@ function luoKasvis() {
 
 function luoAmmus() {
     const ammus = document.createElement('div');
-    ammus.textContent = ''; //Ammus nyt porkkana.
+    ammus.textContent = '\uD83E\uDD55'; // Porkkana emoji unicode
     ammus.classList.add('hahmo');
     peliAlue.appendChild(ammus);
 
