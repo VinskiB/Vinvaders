@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Vuohi vs. Kasvikset</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
         body {
             display: flex;
@@ -13,8 +14,9 @@
             overflow: hidden;
         }
         #peliAlue {
-            width: 800px;
-            height: 600px;
+            width: 90%; /* Mukautuu näytön leveyteen */
+            max-width: 400px; /* Maksimi leveys */
+            height: 80vh; /* Mukautuu näytön korkeuteen */
             background-color: white;
             position: relative;
         }
@@ -22,10 +24,19 @@
             position: absolute;
             font-size: 30px;
         }
+        #pisteet {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 20px;
+            color: black;
+        }
     </style>
 </head>
 <body>
-    <div id="peliAlue"></div>
+    <div id="peliAlue">
+        <div id="pisteet">Pisteet: 0</div>
+    </div>
     <script src="peli.js"></script>
 </body>
 </html>
