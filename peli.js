@@ -130,4 +130,42 @@ function paivitaPeli() {
     for (let i = 0; i < leijonat.length; i++){
         if (tormays(vuohi, leijonat[i])){
             peliKaynnissa = false;
-            alert("Peli lopp
+            alert("Peli loppui! Leijona osui vuoheen.");
+            break;
+        }
+    }
+
+    requestAnimationFrame(paivitaPeli);
+}
+
+function tormays(element1, element2) {
+    const rect1 = element1.getBoundingClientRect();
+    const rect2 = element2.getBoundingClientRect();
+    return !(rect1.top > rect2.bottom ||
+        rect1.bottom < rect2.top ||
+        rect1.right < rect2.left ||
+        rect1.left > rect2.right);
+}
+
+//Kosketusohjaus.
+peliAlue.addEventListener('touchstart', (event) => {
+    if (!peliKaynnissa) return;
+    const touch = event.touches[0];
+    vuohenX = touch.clientX - peliAlue.getBoundingClientRect().left - 30;
+    if (vuohenX < 0) {
+        vuohenX = 0;
+    } else if (vuohenX > peliAlue.offsetWidth - 60) {
+        vuohenX = peliAlue.offsetWidth - 60;
+    }
+    vuohi.style.left = vuohenX + 'px';
+});
+
+peliAlue.addEventListener('touchend', ()=>{
+    if (!peliKaynnissa) return;
+    luoAmmus();
+});
+
+setInterval(luoKasvis, kasvistenLuontiTaajuus);
+setInterval(luoTahti, tahtienLuontiTaajuus);
+setInterval(luoLeijona, leijonanLuontiTaajuus);
+paivitaPeli();
