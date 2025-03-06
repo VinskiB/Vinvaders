@@ -2,6 +2,7 @@ const peliAlue = document.getElementById('peliAlue');
 const vuohi = document.createElement('div');
 vuohi.textContent = '\uD83D\uDC10'; // Vuohi emoji unicode
 vuohi.classList.add('hahmo');
+vuohi.style.fontSize = '60px'; // Vuohi on kaksi kertaa isompi
 peliAlue.appendChild(vuohi);
 
 const pisteetElementti = document.getElementById('pisteet');
@@ -12,10 +13,10 @@ const kasvistenNopeus = 2;
 const ammuksenNopeus = 8;
 const kasvistenLuontiTaajuus = 1000; // 1 sekunti
 
-let vuohenX = peliAlue.offsetWidth / 2 - 15; // Keskelle
+let vuohenX = peliAlue.offsetWidth / 2 - 30; // Keskelle, vuohen uusi koko huomioitu
 let ammukset = [];
 let kasvikset = [];
-const kasvisEmojis = ['\uD83E\uDD52', '\uD83E\uDD55', '\uD83E\uDD66', '\uD83E\uDD6C']; // Eri vihanneksia
+const kasvisEmojis = ['\uD83E\uDD52', '\uD83E\uDD66', '\uD83E\uDD6C']; // Porkkana poistettu
 
 vuohi.style.left = vuohenX + 'px';
 vuohi.style.bottom = '0px';
@@ -39,8 +40,8 @@ function luoAmmus() {
     ammus.classList.add('hahmo');
     peliAlue.appendChild(ammus);
 
-    ammus.style.left = (vuohenX + 10) + 'px';
-    ammus.style.bottom = '30px';
+    ammus.style.left = (vuohenX + 20) + 'px'; // Vuohen uusi koko huomioitu
+    ammus.style.bottom = '60px'; // Vuohen uusi koko huomioitu
 
     ammukset.push(ammus);
 }
@@ -98,11 +99,11 @@ function tormays(element1, element2) {
 //Kosketusohjaus.
 peliAlue.addEventListener('touchstart', (event) => {
     const touch = event.touches[0];
-    vuohenX = touch.clientX - peliAlue.getBoundingClientRect().left - 15; // 15 on puolet vuohen leveydestä
+    vuohenX = touch.clientX - peliAlue.getBoundingClientRect().left - 30; // 30 on puolet vuohen leveydestä
     if (vuohenX < 0) {
         vuohenX = 0;
-    } else if (vuohenX > peliAlue.offsetWidth - 30) {
-        vuohenX = peliAlue.offsetWidth - 30;
+    } else if (vuohenX > peliAlue.offsetWidth - 60) { // Vuohen uusi koko huomioitu
+        vuohenX = peliAlue.offsetWidth - 60;
     }
     vuohi.style.left = vuohenX + 'px';
 });
