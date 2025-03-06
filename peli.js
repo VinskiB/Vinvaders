@@ -1,29 +1,45 @@
 const peliAlue = document.getElementById('peliAlue');
 const vuohi = document.createElement('div');
-vuohi.textContent = '\uD83D\uDC10'; // Vuohi emoji unicode
+vuohi.textContent = '\uD83D\uDC10';
 vuohi.classList.add('hahmo');
-vuohi.style.fontSize = '60px'; // Vuohi on kaksi kertaa isompi
+vuohi.style.fontSize = '60px';
 peliAlue.appendChild(vuohi);
 
 const pisteetElementti = document.getElementById('pisteet');
 let pisteet = 0;
+let peliKaynnissa = true; // Lisätty pelin tila
 
 const vuohenNopeus = 5;
 const kasvistenNopeus = 2;
 const ammuksenNopeus = 8;
-const kasvistenLuontiTaajuus = 1000; // 1 sekunti
+const kasvistenLuontiTaajuus = 1000;
+const tahtienLuontiTaajuus = 50;
+const leijonanLuontiTaajuus = 5000; // Leijonan luonti 5 sekunnin välein
 
-let vuohenX = peliAlue.offsetWidth / 2 - 30; // Keskelle, vuohen uusi koko huomioitu
+let vuohenX = peliAlue.offsetWidth / 2 - 30;
 let ammukset = [];
 let kasvikset = [];
-const kasvisEmojis = ['\uD83E\uDD52', '\uD83E\uDD66', '\uD83E\uDD6C']; // Porkkana poistettu
+let leijonat = []; // Leijonat taulukko
+const kasvisEmojis = ['\uD83E\uDD52', '\uD83E\uDD66', '\uD83E\uDD6C'];
 
 vuohi.style.left = vuohenX + 'px';
 vuohi.style.bottom = '0px';
 
+function luoTahti() {
+    const tahti = document.createElement('div');
+    tahti.classList.add('tahti');
+    peliAlue.appendChild(tahti);
+
+    const tahtiX = Math.random() * peliAlue.offsetWidth;
+    const tahtiY = Math.random() * peliAlue.offsetHeight;
+    tahti.style.left = tahtiX + 'px';
+    tahti.style.top = tahtiY + 'px';
+}
+
 function luoKasvis() {
+    if (!peliKaynnissa) return;
     const kasvis = document.createElement('div');
-    kasvis.textContent = kasvisEmojis[Math.floor(Math.random() * kasvisEmojis.length)]; // Satunnainen kasvis
+    kasvis.textContent = kasvisEmojis[Math.floor(Math.random() * kasvisEmojis.length)];
     kasvis.classList.add('hahmo');
     peliAlue.appendChild(kasvis);
 
@@ -34,19 +50,35 @@ function luoKasvis() {
     kasvikset.push(kasvis);
 }
 
+function luoLeijona() {
+    if (!peliKaynnissa) return;
+    const leijona = document.createElement('div');
+    leijona.textContent = '\uD83E\uDD81'; // Leijona emoji
+    leijona.classList.add('hahmo');
+    peliAlue.appendChild(leijona);
+
+    const leijonaX = Math.random() * (peliAlue.offsetWidth - 30);
+    leijona.style.left = leijonaX + 'px';
+    leijona.style.top = '0px';
+
+    leijonat.push(leijona);
+}
+
 function luoAmmus() {
+    if (!peliKaynnissa) return;
     const ammus = document.createElement('div');
-    ammus.textContent = '\uD83E\uDD55'; // Porkkana emoji unicode
+    ammus.textContent = '\uD83E\uDD55';
     ammus.classList.add('hahmo');
     peliAlue.appendChild(ammus);
 
-    ammus.style.left = (vuohenX + 20) + 'px'; // Vuohen uusi koko huomioitu
-    ammus.style.bottom = '60px'; // Vuohen uusi koko huomioitu
+    ammus.style.left = (vuohenX + 20) + 'px';
+    ammus.style.bottom = '60px';
 
     ammukset.push(ammus);
 }
 
 function paivitaPeli() {
+    if (!peliKaynnissa) return;
     // Ammusten liikkuminen
     for (let i = 0; i < ammukset.length; i++) {
         ammukset[i].style.bottom = parseInt(ammukset[i].style.bottom) + ammuksenNopeus + 'px';
@@ -67,6 +99,16 @@ function paivitaPeli() {
         }
     }
 
+    // Leijonien liikkuminen
+    for (let i = 0; i < leijonat.length; i++) {
+        leijonat[i].style.top = parseInt(leijonat[i].style.top) + kasvistenNopeus + 'px';
+        if (parseInt(leijonat[i].style.top) > peliAlue.offsetHeight) {
+            peliAlue.removeChild(leijonat[i]);
+            leijonat.splice(i, 1);
+            i--;
+        }
+    }
+
     //Törmäysten havaitseminen.
     for (let i = 0; i < ammukset.length; i++){
         for (let j = 0; j< kasvikset.length; j++){
@@ -78,9 +120,18 @@ function paivitaPeli() {
                 kasvikset.splice(j, 1);
                 j--;
                 pisteet++;
-                pisteetElementti.textContent = 'Pisteet: ' + pisteet;
+                pisteetElementti.textContent = 'Points: ' + pisteet;
                 break;
             }
+        }
+    }
+
+    //Törmäys leijonan kanssa
+    for (let i = 0; i < leijonat.length; i++){
+        if (tormays(vuohi, leijonat[i])){
+            peliKaynnissa = false;
+            alert("Peli loppui! Leijona osui vuoheen.");
+            break;
         }
     }
 
@@ -98,19 +149,23 @@ function tormays(element1, element2) {
 
 //Kosketusohjaus.
 peliAlue.addEventListener('touchstart', (event) => {
+    if (!peliKaynnissa) return;
     const touch = event.touches[0];
-    vuohenX = touch.clientX - peliAlue.getBoundingClientRect().left - 30; // 30 on puolet vuohen leveydestä
+    vuohenX = touch.clientX - peliAlue.getBoundingClientRect().left - 30;
     if (vuohenX < 0) {
         vuohenX = 0;
-    } else if (vuohenX > peliAlue.offsetWidth - 60) { // Vuohen uusi koko huomioitu
+    } else if (vuohenX > peliAlue.offsetWidth - 60) {
         vuohenX = peliAlue.offsetWidth - 60;
     }
     vuohi.style.left = vuohenX + 'px';
 });
 
 peliAlue.addEventListener('touchend', ()=>{
+    if (!peliKaynnissa) return;
     luoAmmus();
 });
 
 setInterval(luoKasvis, kasvistenLuontiTaajuus);
+setInterval(luoTahti, tahtienLuontiTaajuus);
+setInterval(luoLeijona, leijonanLuontiTaajuus); // Leijonan luonti
 paivitaPeli();
