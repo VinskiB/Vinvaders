@@ -14,11 +14,12 @@
             overflow: hidden;
         }
         #peliAlue {
-            width: 90%; /* Mukautuu näytön leveyteen */
-            max-width: 400px; /* Maksimi leveys */
-            height: 80vh; /* Mukautuu näytön korkeuteen */
-            background-color: white;
+            width: 90%;
+            max-width: 400px;
+            height: 80vh;
+            background-color: black; /* Musta tausta */
             position: relative;
+            overflow: hidden; /* Estää tähdet menemästä yli */
         }
         .hahmo {
             position: absolute;
@@ -29,13 +30,20 @@
             top: 10px;
             left: 10px;
             font-size: 20px;
-            color: black;
+            color: white; /* Valkoinen teksti */
+        }
+        .tahti {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: white;
+            border-radius: 50%;
         }
     </style>
 </head>
 <body>
     <div id="peliAlue">
-        <div id="pisteet">Pisteet: 0</div>
+        <div id="pisteet">Points: 0</div>
     </div>
     <script src="peli.js"></script>
 </body>
