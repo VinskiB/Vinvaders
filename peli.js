@@ -4,25 +4,29 @@ vuohi.textContent = '\uD83D\uDC10'; // Vuohi emoji unicode
 vuohi.classList.add('hahmo');
 peliAlue.appendChild(vuohi);
 
+const pisteetElementti = document.getElementById('pisteet');
+let pisteet = 0;
+
 const vuohenNopeus = 5;
 const kasvistenNopeus = 2;
 const ammuksenNopeus = 8;
 const kasvistenLuontiTaajuus = 1000; // 1 sekunti
 
-let vuohenX = 350;
+let vuohenX = peliAlue.offsetWidth / 2 - 15; // Keskelle
 let ammukset = [];
 let kasvikset = [];
+const kasvisEmojis = ['\uD83E\uDD52', '\uD83E\uDD55', '\uD83E\uDD66', '\uD83E\uDD6C']; // Eri vihanneksia
 
 vuohi.style.left = vuohenX + 'px';
 vuohi.style.bottom = '0px';
 
 function luoKasvis() {
     const kasvis = document.createElement('div');
-    kasvis.textContent = '\uD83E\uDD52'; // Parsakaali emoji unicode
+    kasvis.textContent = kasvisEmojis[Math.floor(Math.random() * kasvisEmojis.length)]; // Satunnainen kasvis
     kasvis.classList.add('hahmo');
     peliAlue.appendChild(kasvis);
 
-    const kasvisX = Math.random() * 750;
+    const kasvisX = Math.random() * (peliAlue.offsetWidth - 30);
     kasvis.style.left = kasvisX + 'px';
     kasvis.style.top = '0px';
 
@@ -45,7 +49,7 @@ function paivitaPeli() {
     // Ammusten liikkuminen
     for (let i = 0; i < ammukset.length; i++) {
         ammukset[i].style.bottom = parseInt(ammukset[i].style.bottom) + ammuksenNopeus + 'px';
-        if (parseInt(ammukset[i].style.bottom) > 600) {
+        if (parseInt(ammukset[i].style.bottom) > peliAlue.offsetHeight) {
             peliAlue.removeChild(ammukset[i]);
             ammukset.splice(i, 1);
             i--;
@@ -55,7 +59,7 @@ function paivitaPeli() {
     // Kasvisten liikkuminen
     for (let i = 0; i < kasvikset.length; i++) {
         kasvikset[i].style.top = parseInt(kasvikset[i].style.top) + kasvistenNopeus + 'px';
-        if (parseInt(kasvikset[i].style.top) > 600) {
+        if (parseInt(kasvikset[i].style.top) > peliAlue.offsetHeight) {
             peliAlue.removeChild(kasvikset[i]);
             kasvikset.splice(i, 1);
             i--;
@@ -72,6 +76,8 @@ function paivitaPeli() {
                 peliAlue.removeChild(kasvikset[j]);
                 kasvikset.splice(j, 1);
                 j--;
+                pisteet++;
+                pisteetElementti.textContent = 'Pisteet: ' + pisteet;
                 break;
             }
         }
@@ -92,11 +98,11 @@ function tormays(element1, element2) {
 //Kosketusohjaus.
 peliAlue.addEventListener('touchstart', (event) => {
     const touch = event.touches[0];
-    vuohenX = touch.clientX - peliAlue.offsetLeft - 15; // 15 on puolet vuohen leveydestä
+    vuohenX = touch.clientX - peliAlue.getBoundingClientRect().left - 15; // 15 on puolet vuohen leveydestä
     if (vuohenX < 0) {
         vuohenX = 0;
-    } else if (vuohenX > 750) {
-        vuohenX = 750;
+    } else if (vuohenX > peliAlue.offsetWidth - 30) {
+        vuohenX = peliAlue.offsetWidth - 30;
     }
     vuohi.style.left = vuohenX + 'px';
 });
